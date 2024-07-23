@@ -1,9 +1,8 @@
+let tasks = [
+    { id: 1, title: 'Start Todo List', description: 'Final Project', dueDate: '2024-22-07', priority: 'high' },
+    // ....
+]
 document.addEventListener('DOMContentLoaded', () => {
-    let tasks = [
-        { id: 1, title: 'Start Todo List', description: 'Final Project', dueDate: '2024-22-07', priority: 'high' },
-        // ....
-    ]
-
     function renderTasks() {
         const taskList = document.getElementById('allTasks')
         taskList.innerHTML = ""
@@ -59,7 +58,19 @@ function saveTask() {
     const priority = document.querySelector('input[name="priority"]:checked').value
 
     if (title && description && priority) {
-        console.log(title, description, priority)
+        let task = {
+            id: tasks.length + 1,
+            title,
+            description,
+            dueDate: '',
+            priority
+        }
+        tasks.push(task)
+        saveTasksToLocalStorage()
         cancelTask()
     }
+}
+
+function saveTasksToLocalStorage() {
+    localStorage.setItem(JSON.stringify(tasks), 'tasks')
 }
