@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTasks() {
         const taskList = document.getElementById('allTasks')
         taskList.innerHTML = ""
-        
+
         tasks.forEach(task => {
             const li = document.createElement('li')
-            
+
             li.draggable = true
             li.id = task.id
             li.innerHTML = `
@@ -35,12 +35,12 @@ function addTask() {
 
     taskForm.id = 'taskForm'
     taskForm.innerHTML = `
-            <input type='text' placeholder="Title" />
-            <input type='text' placeholder='Description' />
+            <input id='task-title' type='text' placeholder="Title" />
+            <input id='task-description' type='text' placeholder='Description' />
             <div><input id='priority-low' type='radio' name="priority" value="low" />!</div>
             <div><input id='priority-medium' type='radio' name="priority" value="medium" />!!</div>
             <div><input id='priority-high' type='radio' name="priority" value="high" />!!!</div>
-            <button onclick="alert('saveTask()')">Save</button>
+            <button onclick="saveTask()">Save</button>
             <button onclick="cancelTask()">Cancel</button>
         `
 
@@ -51,4 +51,15 @@ function cancelTask() {
     const taskForm = document.getElementById('taskForm')
 
     if (taskForm) taskForm.remove()
+}
+
+function saveTask() {
+    const title = document.getElementById('task-title').value
+    const description = document.getElementById('task-description').value
+    const priority = document.querySelector('input[name="priority"]:checked').value
+
+    if (title && description && priority) {
+        console.log(title, description, priority)
+        cancelTask()
+    }
 }
