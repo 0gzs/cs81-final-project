@@ -2,17 +2,23 @@ let tasks = [
     { id: 1, title: 'Start Todo List', description: 'Final Project', dueDate: '2024-22-07', priority: 'high' },
     // ....
 ]
+
 document.addEventListener('DOMContentLoaded', () => {
-    function renderTasks() {
-        const taskList = document.getElementById('allTasks')
-        taskList.innerHTML = ""
+    renderTasks()
+})
 
-        tasks.forEach(task => {
-            const li = document.createElement('li')
+function renderTasks() {
+    const taskList = document.getElementById('allTasks')
+    taskList.innerHTML = ""
 
-            li.draggable = true
-            li.id = task.id
-            li.innerHTML = `
+    loadTasksFromLocalStorage()
+
+    tasks.forEach(task => {
+        const li = document.createElement('li')
+
+        li.draggable = true
+        li.id = task.id
+        li.innerHTML = `
                 <h3>${task.title}</h3>
                 <p>${task.description}</p>
                 <p>${task.dueDate}</p>
@@ -20,12 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button>Edit Task</button>
                 <button onclick="alert('Hi')">Delete</delete>
             `
-            taskList.appendChild(li)
-        })
-    }
-
-    renderTasks()
-})
+        taskList.appendChild(li)
+    })
+}
 
 // Add task to populate form to then 'saveTask'
 function addTask() {
@@ -68,9 +71,18 @@ function saveTask() {
         tasks.push(task)
         saveTasksToLocalStorage()
         cancelTask()
+        renderTasks()
     }
 }
 
 function saveTasksToLocalStorage() {
     localStorage.setItem(JSON.stringify(tasks), 'tasks')
+}
+
+function loadTasksFromLocalStorage() {
+    const storedTasks = localStorage.getItem('tasks')
+    if (storedTasks) {
+        tasks = JSON.parse(storedTasks)
+        console.log(tasks)
+    }
 }
