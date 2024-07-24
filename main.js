@@ -1,5 +1,5 @@
 let tasks = [
-    { id: 1, title: 'Start Todo List', description: 'Final Project', dueDate: '2024-22-07', priority: 'high' },
+    { id: 1, title: 'Start Todo List', description: 'Final Project', dueDate: '07/22/2024', priority: 'high' },
     // ....
 ]
 
@@ -41,7 +41,7 @@ function createTaskForm(task = {}) {
     const description = task.description || ''
     const priority = task.priority || 'low'
     const dueDate = task.dueDate ? new Date(task.dueDate) : new Date()
-    const dueDay = dueDate.getDate()
+    const dueDay = dueDate.getDay()
     const dueMonth = dueDate.getMonth() + 1
     const dueYear = dueDate.getFullYear()
 
@@ -59,7 +59,7 @@ function createTaskForm(task = {}) {
         </div>
         <div>
             <label for='due-day'>Day:</label>
-            <select id='due-day" class='date-selector'>${generateDayOptions(dueDay)}</select>
+            <select id='due-day' class='date-selector'>${generateDayOptions(dueDay)}</select>
             <label for='due-month'>Month:</label>
             <select id='due-month' class='date-selector'>${generateMonthOptions(dueMonth)}</select>
             <label for='due-year'>Year:</label>
@@ -139,6 +139,10 @@ function saveTask(taskForm) {
     const title = document.getElementById('task-title').value
     const description = document.getElementById('task-description').value
     const priority = document.querySelector('input[name="priority"]:checked').value
+    const day = document.getElementById('due-day').value
+    const month = document.getElementById('due-month').value
+    const year = document.getElementById('due-year').value
+    const dueDate = `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`
 
     if (title && description && priority) {
         if (id) {
@@ -146,12 +150,13 @@ function saveTask(taskForm) {
             task.title = title
             task.description = description
             task.priority = priority
+            task.dueDate = dueDate
         } else {
             let task = {
                 id: tasks.length + 1,
                 title,
                 description,
-                dueDate: '',
+                dueDate,
                 priority
             }
             tasks.push(task)
