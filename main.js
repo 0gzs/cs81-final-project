@@ -22,14 +22,21 @@ function createTaskElement(task, id) {
     const taskElement = document.createElement('li')
     taskElement.draggable = true
     taskElement.id = id
+    taskElement.classList.add('task-container')
     taskElement.innerHTML = `
-        <input type="checkbox" id="task-completed" />
-        <p class='task-title'>${task.title}</p>
-        <p class='task-description'>${task.description}</p>
-        <p class='task-dueDate'>${task.dueDate}</p>
-        <p class='task-priority'>${task.priority}</p>
-        <button class='btn btn-edit' onclick="editTask(${id})">Edit Task</button>
-        <button class='btn btn-delete' onclick="deleteTask(${id})">Delete</delete>
+        <div style="padding: 2rem">
+            <input type="checkbox" id="task-completed" />
+        </div>
+        <div style="flex: 1">
+            <p class='task-title'>${task.title}</p>
+            <p class='task-description'>${task.description}</p>
+            <div style="width: 100%; display: flex">
+                <p class='task-dueDate'>${task.dueDate}</p>
+                <p class='task-priority'>${task.priority}</p>
+            </div>
+            <button class='btn btn-edit' onclick="editTask(${id})">Edit Task</button>
+            <button class='btn btn-delete' onclick="deleteTask(${id})">Delete</delete>
+        </div>
     `
     return taskElement
 }
@@ -50,14 +57,14 @@ function createTaskForm(task = {}) {
     taskForm.id = formId
     taskForm.innerHTML = `
         <input id='task-id' type='hidden' value="${task.id || ''}" />
-        <input id='task-title' type='text' placeholder="Title" value="${title}" />
-        <input id='task-description' type='text' placeholder='Description' value="${description}" />
-        <div>
-            <span><input id='priority-low' type='radio' name="priority" value="low" ${priority == 'low' ? 'checked' : ''} />!</span>
-            <span><input id='priority-medium' type='radio' name="priority" value="medium" ${priority == 'medium' ? 'checked' : ''} />!!</span>
-            <span><input id='priority-high' type='radio' name="priority" value="high" ${priority == 'high' ? 'checked' : ''} />!!!</span>
+        <span class='task-title'><input id='task-title' type='text' placeholder="Title" value="${title}" /></span>
+        <span class='task-description'><input id='task-description' type='text' placeholder='Description' value="${description}" /></span>
+        <div id='task-priority'>
+            <span class='priority-selector'><input id='priority-low' type='radio' name="priority" value="low" ${priority == 'low' ? 'checked' : ''} />!</span>
+            <span class='priority-selector'><input id='priority-medium' type='radio' name="priority" value="medium" ${priority == 'medium' ? 'checked' : ''} />!!</span>
+            <span class='priority-selector'><input id='priority-high' type='radio' name="priority" value="high" ${priority == 'high' ? 'checked' : ''} />!!!</span>
         </div>
-        <div>
+        <div id="task-date">
             <label for='due-day'>Day:</label>
             <select id='due-day' class='date-selector'>${generateDayOptions(dueDay)}</select>
             <label for='due-month'>Month:</label>
@@ -65,8 +72,8 @@ function createTaskForm(task = {}) {
             <label for='due-year'>Year:</label>
             <select id='due-year' class='date-selector'>${generateYearOptions(dueYear)}</select>
         </div>
-        <button id="saveTaskButton">Save</button>
-        <button id="cancelTaskButton">Cancel</button>
+        <button class='btn btn-save' id="saveTaskButton">Save</button>
+        <button class='btn btn-cancel' id="cancelTaskButton">Cancel</button>
     `
 
     taskForm.querySelector('#saveTaskButton').addEventListener('click', () => saveTask(taskForm))
