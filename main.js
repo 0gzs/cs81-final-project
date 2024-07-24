@@ -80,10 +80,12 @@ function editTask(taskId) {
     }
 }
 
-function cancelTask() {
-    const taskForm = document.getElementById('taskForm')
-
-    if (taskForm) taskForm.remove()
+function cancelTask(taskForm, taskId = null) {
+    if (taskId) {
+        const task = tasks.find(t => t.id == taskId)
+        const taskElement = createTaskElement(task, taskId)
+        taskForm.replaceWith(taskElement)
+    } else taskForm.remove()
 }
 
 function saveTask(taskForm) {
