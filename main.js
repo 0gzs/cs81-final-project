@@ -12,20 +12,9 @@ function renderTasks() {
     const taskList = document.getElementById('allTasks')
     taskList.innerHTML = ""
 
-    tasks.forEach(task => {
-        const li = document.createElement('li')
-
-        li.draggable = true
-        li.id = task.id
-        li.innerHTML = `
-                <h3>${task.title}</h3>
-                <p>${task.description}</p>
-                <p>${task.dueDate}</p>
-                <p>${task.priority}</p>
-                <button>Edit Task</button>
-                <button onclick="alert('Hi')">Delete</delete>
-            `
-        taskList.appendChild(li)
+    tasks.forEach((task, i) => {
+        const taskElement = createTaskElement(task, i + 1)
+        taskList.appendChild(taskElement)
     })
 }
 
@@ -97,22 +86,30 @@ function cancelTask() {
     if (taskForm) taskForm.remove()
 }
 
-function saveTask() {
+function saveTask(taskForm) {
+    const id = document.getElementById('task-id').value
     const title = document.getElementById('task-title').value
     const description = document.getElementById('task-description').value
     const priority = document.querySelector('input[name="priority"]:checked').value
 
     if (title && description && priority) {
-        let task = {
-            id: tasks.length + 1,
-            title,
-            description,
-            dueDate: '',
-            priority
+        if (id) {
+            const task = tasks.find(t => t.id == id)
+            task.title = title
+            task.description = description
+            task.priority = priority
+        } else {
+            let task = {
+                id: tasks.length + 1,
+                title,
+                description,
+                dueDate: '',
+                priority
+            }
+            tasks.push(task)
         }
-        tasks.push(task)
         saveTasksToLocalStorage()
-        cancelTask()
+        cancelTask(taskForm)
         renderTasks()
     }
 }
