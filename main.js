@@ -28,7 +28,7 @@ function createTaskElement(task, id) {
         <p class='task-dueDate'>${task.dueDate}</p>
         <p class='task-priority'>${task.priority}</p>
         <button class='btn btn-edit' onclick="editTask(${id})">Edit Task</button>
-        <button class='btn btn-delete' onclick="alert('Hi')">Delete</delete>
+        <button class='btn btn-delete' onclick="deleteTask(${id})">Delete</delete>
     `
     return taskElement
 }
@@ -78,6 +78,12 @@ function editTask(taskId) {
         const taskElement = document.getElementById(task.id)
         taskElement.replaceWith(taskForm)
     }
+}
+
+function deleteTask(taskId) {
+    tasks = tasks.filter(t => t.id !== taskId)
+    saveTasksToLocalStorage()
+    renderTasks()
 }
 
 function cancelTask(taskForm, taskId = null) {
