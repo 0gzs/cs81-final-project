@@ -4,14 +4,13 @@ let tasks = [
 ]
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadTasksFromLocalStorage()
     renderTasks()
 })
 
 function renderTasks() {
     const taskList = document.getElementById('allTasks')
     taskList.innerHTML = ""
-
-    loadTasksFromLocalStorage()
 
     tasks.forEach(task => {
         const li = document.createElement('li')
@@ -76,7 +75,7 @@ function saveTask() {
 }
 
 function saveTasksToLocalStorage() {
-    localStorage.setItem(JSON.stringify(tasks), 'tasks')
+    localStorage.setItem('tasks', JSON.stringify(tasks))
 }
 
 function loadTasksFromLocalStorage() {
