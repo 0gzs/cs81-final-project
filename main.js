@@ -23,6 +23,7 @@ function createTaskElement(task, id) {
     taskElement.draggable = true
     taskElement.id = id
     taskElement.innerHTML = `
+        <input type="checkbox" id="task-completed" />
         <p class='task-title'>${task.title}</p>
         <p class='task-description'>${task.description}</p>
         <p class='task-dueDate'>${task.dueDate}</p>
@@ -39,6 +40,10 @@ function createTaskForm(task = {}) {
     const title = task.title || ''
     const description = task.description || ''
     const priority = task.priority || 'low'
+    const dueDate = task.dueDate ? new Date(task.dueDate) : new Date()
+    const dueDay = dueDate.getDate()
+    const dueMonth = dueDate.getMonth() + 1
+    const dueYear = dueDate.getFullYear()
 
     const taskForm = document.createElement('li')
     taskForm.draggable = true
@@ -52,6 +57,14 @@ function createTaskForm(task = {}) {
             <span><input id='priority-medium' type='radio' name="priority" value="medium" ${priority == 'medium' ? 'checked' : ''} />!!</span>
             <span><input id='priority-high' type='radio' name="priority" value="high" ${priority == 'high' ? 'checked' : ''} />!!!</span>
         </div>
+        <div>
+            <label for='due-day'>Day:</label>
+            <select id='due-day" class='date-selector'>${generateDayOptions(dueDay)}</select>
+            <label for='due-month'>Month:</label>
+            <select id='due-month' class='date-selector'>${generateMonthOptions(dueMonth)}</select>
+            <label for='due-year'>Year:</label>
+            <select id='due-year' class='date-selector'>${generateYearOptions(dueYear)}</select>
+        </div>
         <button id="saveTaskButton">Save</button>
         <button id="cancelTaskButton">Cancel</button>
     `
@@ -60,6 +73,33 @@ function createTaskForm(task = {}) {
     taskForm.querySelector('#cancelTaskButton').addEventListener('click', () => cancelTask(taskForm, isEdit ? task.id : null))
 
     return taskForm
+}
+
+function generateDayOptions(selectedDay) {
+    let options = ''
+    for (let i = 1; i <= 31; i++) {
+        options += `<option value="${i}" ${i === selectedDay ? 'selected' : ''}>${i}</option>`
+    }
+    return options
+}
+
+function generateMonthOptions(selectedMonth) {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    let options = ''
+    months.forEach((month, index) => {
+        const monthValue = index + 1
+        options += `<option value="${monthValue}" ${monthValue === selectedMonth ? 'selected' : ''}>${month}</option>`
+    })
+    return options
+}
+
+function generateYearOptions(selectedYear) {
+    let options = ''
+    const currentYear = new Date().getFullYear()
+    for (let i = currentYear; i <= currentYear + 5; i++) {
+        options += `<option value="${i}" ${i === selectedYear ? 'selected' : ''}>${i}</option>`
+    }
+    return options
 }
 
 // Add task to populate form to then 'saveTask'
