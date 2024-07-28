@@ -75,11 +75,28 @@ input[type="checkbox"] + label:before {
     width: 1.5rem;
     height: 1.5rem;
     background-color: none;
-    border: 2px solid #528f66;
+    border: 2px solid #ed7278;
     border-radius: 50%;
     position: absolute;
     left: 0;
     top: 0;
+}
+
+input[type="checkbox"]:checked + label:before {
+    background-color: #66bb6a;
+}
+
+input[type="checkbox"]:checked + label:after {
+    content: "";
+    display: block;
+    width: .25rem;
+    height: .5rem;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 5px;
+    left: 7px;
 }
 
 input[type="text"] {
