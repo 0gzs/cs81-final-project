@@ -1,6 +1,4 @@
 let tasks = [
-    { id: 1, title: 'Start Todo List', description: 'Final Project', dueDate: '07/22/2024', priority: 'high' },
-    // ....
 ]
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderTasks() {
     const taskList = document.getElementById('allTasks')
+    const greeting = getGreeting()
+    document.getElementById('greeting').innerHTML = greeting
     taskList.innerHTML = ""
 
     tasks.forEach((task, i) => {
@@ -18,24 +18,43 @@ function renderTasks() {
     })
 }
 
+function getGreeting() {
+    const now = new Date()
+    const hour = now.getHours()
+    let greeting
+
+    if (hour < 12) greeting = "Good morning"
+    else if (hour < 18) greeting = "Good afternoon"
+    else greeting = "Good evening"
+
+    return greeting
+}
+
 function createTaskElement(task, id) {
     const taskElement = document.createElement('li')
+    const priority = task.priority
     taskElement.draggable = true
     taskElement.id = id
     taskElement.classList.add('task-container')
     taskElement.innerHTML = `
-        <div style="padding: 2rem">
-            <input type="checkbox" id="task-completed" />
+        <div style="padding: 2rem; position: relative">
+            <input class="check" type="checkbox" id="task-completed-${id}" ${task.completed ? 'checked' : ''} onchange="toggleTaskCompletion(${id})" />
+            <label for="task-completed-${id}"></label>
         </div>
-        <div style="flex: 1">
-            <p class='task-title'>${task.title}</p>
-            <p class='task-description'>${task.description}</p>
-            <div style="width: 100%; display: flex">
+        <div style="flex: 1" class='task-wrapper'>
+            <h2 class='task-title ${task.completed ? 'completed' : ''}'>${task.title}</h2>
+            <span style="display: flex; align-items: center; gap: 2.5rem">
                 <p class='task-dueDate'>${task.dueDate}</p>
-                <p class='task-priority'>${task.priority}</p>
-            </div>
-            <button class='btn btn-edit' onclick="editTask(${id})">Edit Task</button>
-            <button class='btn btn-delete' onclick="deleteTask(${id})">Delete</delete>
+                <span class="${priority == "low" ? 'priority priority-low' : priority == "medium" ? 'priority priority-medium' : 'priority priority-high'}">${priority.toUpperCase()}</span>
+            </span>
+            <span>
+                <h3>Description:</h3>
+                <p class='task-description ${task.completed ? 'completed' : ''}'>${task.description}</p>
+            </span>
+            <span class="btn-container">
+                <button class='btn btn-edit' onclick="editTask(${id})"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button class='btn btn-delete' onclick="deleteTask(${id})"><i class="fa-solid fa-trash-can"></i></delete>
+            </span>
         </div>
     `
     return taskElement
@@ -49,31 +68,50 @@ function createTaskForm(task = {}) {
     const priority = task.priority || 'low'
     const dueDate = task.dueDate ? new Date(task.dueDate) : new Date()
     const dueDay = dueDate.getDay()
-    const dueMonth = dueDate.getMonth() + 1
+    const dueMonth = dueDate.toLocaleString('default', { month: 'long' });
     const dueYear = dueDate.getFullYear()
 
     const taskForm = document.createElement('li')
     taskForm.draggable = true
     taskForm.id = formId
+    taskForm.classList.add('task-container')
     taskForm.innerHTML = `
-        <input id='task-id' type='hidden' value="${task.id || ''}" />
-        <span class='task-title'><input id='task-title' type='text' placeholder="Title" value="${title}" /></span>
-        <span class='task-description'><input id='task-description' type='text' placeholder='Description' value="${description}" /></span>
-        <div id='task-priority'>
-            <span class='priority-selector'><input id='priority-low' type='radio' name="priority" value="low" ${priority == 'low' ? 'checked' : ''} />!</span>
-            <span class='priority-selector'><input id='priority-medium' type='radio' name="priority" value="medium" ${priority == 'medium' ? 'checked' : ''} />!!</span>
-            <span class='priority-selector'><input id='priority-high' type='radio' name="priority" value="high" ${priority == 'high' ? 'checked' : ''} />!!!</span>
+        <div style="padding: 2rem; position: relative">
+            <input disabled class="check" type="checkbox" id="task-completed-${task.id}" ${task.completed ? 'checked' : ''} onchange="toggleTaskCompletion(${task.id})" />
+            <label for="task-completed-${task.id}"></label>
         </div>
-        <div id="task-date">
-            <label for='due-day'>Day:</label>
-            <select id='due-day' class='date-selector'>${generateDayOptions(dueDay)}</select>
-            <label for='due-month'>Month:</label>
-            <select id='due-month' class='date-selector'>${generateMonthOptions(dueMonth)}</select>
-            <label for='due-year'>Year:</label>
-            <select id='due-year' class='date-selector'>${generateYearOptions(dueYear)}</select>
+        <div style="flex: 1" class='task-wrapper'>
+
+            <input id='task-id' type='hidden' value="${task.id || ''}" />
+            <h2 class='task-title'><input id='task-title' type='text' placeholder="Title" value="${title}" /></h2>
+
+            <div id="task-date">
+                <select id='due-month' class='date-selector'>${generateMonthOptions(dueMonth)}</select>
+                <select id='due-day' class='date-selector'>${generateDayOptions(dueDay)}</select>
+                <select id='due-year' class='date-selector'>${generateYearOptions(dueYear)}</select>
+            </div>
+            
+            <div style="display: flex; gap: 1.5rem">
+                <input hidden type="radio" id="task-priority-low" name='priority' value='low' ${priority == 'low' ? 'checked' : ''} />
+                <span id="form-low-priority" class="priority priority-select" onclick="selectPriority('low')">LOW</span>
+
+                <input hidden type="radio" id="task-priority-medium" name='priority' value='medium' ${priority == 'medium' ? 'checked' : ''} />
+                <span id="form-medium-priority" class="priority priority-select" onclick="selectPriority('medium')">MEDIUM</span>
+
+                <input hidden type="radio" id="task-priority-high" name='priority' value='high' ${priority == 'high' ? 'checked' : ''} />
+                <span id="form-high-priority" class="priority priority-select" onclick="selectPriority('high')" >HIGH</span>
+            </div>
+
+            <span>
+                <h3>Description:</h3>
+                <p class='task-description'><input id='task-description' type='text' style="border-bottom: 1.5px solid #aeaeae; width: 100%" value="${description}" /></p>
+            </span>
+            
+            <span class='btn-container'>
+                <button class='btn btn-save' id="saveTaskButton">Save</button>
+                <button class='btn btn-cancel' id="cancelTaskButton">Cancel</button>
+            </span>
         </div>
-        <button class='btn btn-save' id="saveTaskButton">Save</button>
-        <button class='btn btn-cancel' id="cancelTaskButton">Cancel</button>
     `
 
     taskForm.querySelector('#saveTaskButton').addEventListener('click', () => saveTask(taskForm))
@@ -93,9 +131,8 @@ function generateDayOptions(selectedDay) {
 function generateMonthOptions(selectedMonth) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     let options = ''
-    months.forEach((month, index) => {
-        const monthValue = index + 1
-        options += `<option value="${monthValue}" ${monthValue === selectedMonth ? 'selected' : ''}>${month}</option>`
+    months.forEach(month => {
+        options += `<option value="${month}" ${month === selectedMonth ? 'selected' : ''}>${month}</option>`
     })
     return options
 }
@@ -107,6 +144,15 @@ function generateYearOptions(selectedYear) {
         options += `<option value="${i}" ${i === selectedYear ? 'selected' : ''}>${i}</option>`
     }
     return options
+}
+
+function toggleTaskCompletion(taskId) {
+    const task = tasks.find(t => t.id == taskId);
+    if (task) {
+        task.completed = !task.completed;
+        saveTasksToLocalStorage();
+        renderTasks();
+    }
 }
 
 // Add task to populate form to then 'saveTask'
@@ -149,7 +195,7 @@ function saveTask(taskForm) {
     const day = document.getElementById('due-day').value
     const month = document.getElementById('due-month').value
     const year = document.getElementById('due-year').value
-    const dueDate = `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`
+    const dueDate = `${month} ${day.padStart(2, '0')} ${year}`
 
     if (title && description && priority) {
         if (id) {
@@ -183,4 +229,22 @@ function loadTasksFromLocalStorage() {
     if (storedTasks) {
         tasks = JSON.parse(storedTasks)
     }
+}
+
+function selectPriority(priority) {
+    const allPriorityRadioButtons = document.querySelectorAll('.priority-select')
+    allPriorityRadioButtons.forEach(span => {
+        const classes = span.classList
+        classes.forEach(clss => {
+            if (clss == "priority-low") span.classList.remove("priority-low")
+            else if (clss == "priority-medium") span.classList.remove("priority-medium")
+            else if (clss == "priority-high") span.classList.remove("priority-high")
+        })
+    })
+
+    const radioButton = document.getElementById(`task-priority-${priority}`)
+    radioButton.checked = true
+
+    const buttonContainer = document.getElementById(`form-${priority}-priority`)
+    buttonContainer.classList.add(`priority-${priority}`)
 }
