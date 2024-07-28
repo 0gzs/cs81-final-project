@@ -12,8 +12,8 @@ function renderTasks() {
     document.getElementById('greeting').innerHTML = greeting
     taskList.innerHTML = ""
 
-    tasks.forEach((task, i) => {
-        const taskElement = createTaskElement(task, i + 1)
+    tasks.forEach((task) => {
+        const taskElement = createTaskElement(task)
         taskList.appendChild(taskElement)
     })
 }
@@ -30,16 +30,17 @@ function getGreeting() {
     return greeting
 }
 
-function createTaskElement(task, id) {
+function createTaskElement(task) {
     const taskElement = document.createElement('li')
     const priority = task.priority
+    const taskId = task.id || ''
     taskElement.draggable = true
-    taskElement.id = id
+    taskElement.id = `task-${taskId}`
     taskElement.classList.add('task-container')
     taskElement.innerHTML = `
         <div style="padding: 2rem; position: relative">
-            <input class="check" type="checkbox" id="task-completed-${id}" ${task.completed ? 'checked' : ''} onchange="toggleTaskCompletion(${id})" />
-            <label for="task-completed-${id}"></label>
+            <input class="check" type="checkbox" id="task-completed-${taskId}" ${task.completed ? 'checked' : ''} onchange="toggleTaskCompletion(${taskId})" />
+            <label for="task-completed-${taskId}"></label>
         </div>
         <div style="flex: 1" class='task-wrapper'>
             <h2 class='task-title ${task.completed ? 'completed' : ''}'>${task.title}</h2>
@@ -52,8 +53,8 @@ function createTaskElement(task, id) {
                 <p class='task-description ${task.completed ? 'completed' : ''}'>${task.description}</p>
             </span>
             <span class="btn-container">
-                <button class='btn btn-edit' onclick="editTask(${id})"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button class='btn btn-delete' onclick="deleteTask(${id})"><i class="fa-solid fa-trash-can"></i></delete>
+                <button class='btn btn-edit' onclick="editTask(${taskId})"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button class='btn btn-delete' onclick="deleteTask(${taskId})"><i class="fa-solid fa-trash-can"></i></delete>
             </span>
         </div>
     `
@@ -206,7 +207,7 @@ function saveTask(taskForm) {
             task.dueDate = dueDate
         } else {
             let task = {
-                id: tasks.length + 1,
+                id: Math.floor(Math.random() * 100000),
                 title,
                 description,
                 dueDate,
