@@ -84,6 +84,7 @@ input[type="checkbox"] + label:before {
 
 input[type="checkbox"]:checked + label:before {
     background-color: #66bb6a;
+    border: 2px solid #528f66;
 }
 
 input[type="checkbox"]:checked + label:after {
